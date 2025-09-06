@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Login | Smart PS Lounge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {'neon-cyan':'#00ffff','neon-purple':'#8b5cf6','dark-bg':'#0a0a0a','dark-secondary':'#1a1a1a'},
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Rajdhani', sans-serif; }
+        .font-orbitron { font-family: 'Orbitron', monospace; }
+        .text-glow { text-shadow: 0 0 10px currentColor; }
+        .btn-gaming { background: linear-gradient(45deg, #8b5cf6, #00ffff); transition: all 0.3s ease; }
+        .btn-gaming:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); }
+    </style>
+</head>
+<body class="bg-dark-bg text-white">
+<div class="min-h-screen flex items-center justify-center p-4" style="background-image: linear-gradient(rgba(10,10,10,0.8), #0a0a0a), url('https://placehold.co/1920x1080/0a0a0a/00ffff?text=Admin+BG'); background-size: cover;">
+    <div class="w-full max-w-md p-8 space-y-8 bg-dark-secondary/80 backdrop-blur-sm border border-neon-cyan/20 rounded-2xl shadow-2xl shadow-neon-cyan/10">
+        <div class="text-center">
+            <h1 class="font-orbitron font-bold text-3xl text-glow text-neon-cyan">Owner Portal</h1>
+        </div>
+        <form class="space-y-6" th:action="@{'/login'}" method="post">
+            <div>
+                <label for="username" class="block text-sm font-semibold text-gray-300">Email</label>
+                <input id="username" name="username" type="email" required class="mt-2 w-full px-4 py-3 bg-dark-bg border border-neon-cyan/30 rounded-lg focus:outline-none focus:border-neon-cyan">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-semibold text-gray-300">Password</label>
+                <input id="password" name="password" type="password" required class="mt-2 w-full px-4 py-3 bg-dark-bg border border-neon-cyan/30 rounded-lg focus:outline-none focus:border-neon-cyan">
+            </div>
+            <div th:if="${param.error}" class="text-center p-3 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg">
+                Invalid email or password.
+            </div>
+            <div th:if="${param.logout}" class="text-center p-3 bg-neon-green/20 text-neon-green border border-neon-green/30 rounded-lg">
+                You have been logged out.
+            </div>
+            <div>
+                <button type="submit" class="w-full btn-gaming py-3 rounded-lg font-semibold text-white text-lg">Sign In</button>
+            </div>
+            <div class="text-center text-gray-400">
+                Don't have an account? <a th:href="@{'/register'}" class="font-medium text-neon-cyan hover:underline">Register here</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

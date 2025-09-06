@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Gaming Cafes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'neon-cyan': '#00ffff', 'neon-purple': '#8b5cf6', 'neon-green': '#10b981', 'dark-bg': '#0a0a0a', 'dark-secondary': '#1a1a1a', 'dark-tertiary': '#2a2a2a' },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Rajdhani', sans-serif; }
+        .font-orbitron { font-family: 'Orbitron', monospace; }
+        .text-glow { text-shadow: 0 0 12px currentColor; }
+        .card-hover:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 30px rgba(0, 255, 255, 0.2); }
+        .btn-gaming { background: linear-gradient(45deg, #8b5cf6, #00ffff); transition: all 0.3s ease; }
+        .filter-input { background: rgba(26, 26, 26, 0.8); border: 1px solid rgba(0, 255, 255, 0.3); }
+        .cafe-card { background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(42, 42, 42, 0.9)); border: 1px solid rgba(0, 255, 255, 0.2); }
+    </style>
+</head>
+<body class="bg-dark-bg text-white font-rajdhani">
+<nav class="fixed top-0 w-full bg-dark-secondary/90 backdrop-blur-md border-b border-neon-cyan/20 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between">
+        <a th:href="@{/}" class="flex items-center space-x-2">
+            <div class="w-10 h-10 bg-gradient-to-r from-neon-purple to-neon-cyan rounded-lg flex items-center justify-center"><span class="font-orbitron font-bold text-lg text-dark-bg">PS</span></div>
+            <span class="font-orbitron font-bold text-xl text-neon-cyan">Smart PS lounge</span>
+        </a>
+        <a th:href="@{/}" class="text-gray-300 hover:text-neon-cyan">Home</a>
+    </div>
+</nav>
+<section class="pt-24 pb-8 bg-gradient-to-b from-dark-bg to-dark-secondary">
+    <div class="container mx-auto px-6">
+        <h1 class="font-orbitron font-bold text-center text-4xl md:text-5xl text-glow text-neon-cyan mb-8">Find Your Arena</h1>
+        <form th:action="@{/user/cafes}" method="get" class="flex gap-4">
+            <input type="text" name="name" placeholder="Search by cafe name..." class="filter-input flex-grow w-full px-4 py-3 rounded-lg text-white">
+            <button type="submit" class="btn-gaming px-6 py-3 rounded-lg font-semibold text-white">Search</button>
+        </form>
+    </div>
+</section>
+<section class="py-8 bg-dark-bg">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div th:each="cafe : ${cafes}" class="cafe-card rounded-xl overflow-hidden card-hover">
+                <div class="p-6">
+                    <h3 class="font-orbitron font-bold text-xl text-neon-cyan" th:text="${cafe.name}">Cafe Name</h3>
+                    <p class="text-gray-400 mb-4" th:text="${cafe.address}">Cafe Address</p>
+                    <a th:href="@{/user/cafes/{id}(id=${cafe.id})}" class="inline-block text-center btn-gaming w-full py-3 rounded-lg font-semibold">View Details & Book</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {'neon-cyan':'#00ffff','neon-purple':'#8b5cf6','neon-green':'#10b981','dark-bg':'#0a0a0a','dark-secondary':'#1a1a1a'},
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Rajdhani', sans-serif; }
+        .font-orbitron { font-family: 'Orbitron', monospace; }
+        .text-glow { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+    </style>
+</head>
+<body class="bg-dark-bg min-h-screen flex items-center justify-center">
+<div class="w-full max-w-2xl mx-auto p-8">
+    <div class="bg-dark-secondary border border-neon-green/30 rounded-2xl p-8 text-center shadow-2xl shadow-neon-green/10">
+        <h1 class="font-orbitron font-bold text-4xl text-glow text-neon-green mb-4">Booking Confirmed!</h1>
+        <p class="text-gray-300 text-lg mb-8">Your session is locked in. Show this confirmation at the cafe.</p>
+        <div class="text-left bg-dark-bg p-6 rounded-lg border border-neon-cyan/20">
+            <p class="mb-2"><strong class="text-neon-cyan">Cafe:</strong> <span th:text="${cafeName}">Your Cafe</span></p>
+            <p><strong class="text-neon-cyan">PC Seat:</strong> #<span th:text="${pcSeatNumber}">1</span></p>
+        </div>
+        <a th:href="@{/}" class="inline-block mt-8 text-neon-cyan hover:text-white transition">&laquo; Back to Home</a>
+    </div>
+</div>
+</body>
+</html>
