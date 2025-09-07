@@ -22,7 +22,6 @@
     <nav class="p-4 space-y-2 flex-grow">
         <a th:href="@{/owner/}" class="block py-3 px-4 rounded-lg hover:bg-neon-cyan/10 sidebar-link font-semibold">📈 Dashboard</a>
         <a th:href="@{/owner/cafes}" class="block py-3 px-4 rounded-lg sidebar-link active font-semibold">☕ Manage Cafes</a>
-        <a th:href="@{/owner/cafes/${pcId}}" class="block py-3 px-4 rounded-lg sidebar-link active font-semibold">☕ Manage PCs</a>
     </nav>
     <div class="p-4 border-t border-neon-cyan/20">
         <form th:action="@{/logout}" method="post">
@@ -31,7 +30,10 @@
     </div>
 </aside>
 <main class="flex-1 p-8">
-    <h1 class="font-orbitron text-4xl font-bold text-neon-purple mb-8">Slots for PC #<span th:text="${pcId}"></span></h1>
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="font-orbitron text-4xl font-bold text-neon-purple">Manage Slots for PC <span th:text="${pcId}"></span></h1>
+        <a th:href="@{/owner/PCs/{cafeId}(cafeId=${cafeId})}" class="btn-gaming px-6 py-3 rounded-lg font-semibold text-dark-bg">Back to PCs</a>
+    </div>
     <div class="bg-dark-secondary border border-neon-cyan/20 rounded-xl overflow-hidden">
         <table class="w-full text-left">
             <thead class="bg-dark-tertiary/50">
@@ -46,8 +48,10 @@
                 <td class="p-4" th:text="${slot.startTime}"></td>
                 <td class="p-4" th:text="${slot.endTime}"></td>
                 <td class="p-4">
-                        <span class="px-3 py-1 rounded-full text-sm font-semibold" th:text="${slot.status}"
-                              th:classappend="${slot.status == 'open'} ? 'bg-neon-green/20 text-neon-green' : 'bg-red-500/20 text-red-400'"></span>
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold"
+                          th:text="${slot.status}"
+                          th:classappend="${slot.status == 'open' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                    </span>
                 </td>
             </tr>
             </tbody>

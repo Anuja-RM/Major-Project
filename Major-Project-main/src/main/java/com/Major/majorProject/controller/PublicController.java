@@ -41,7 +41,7 @@ public class PublicController {
     public String ownerRegistration(@ModelAttribute("ownerRegistrationDto") OwnerRegistrationDto ord){
         System.out.println("Received registration request for email: " + ord.getEmail());
         ownerService.ownerRegistration(ord);
-        return "redirect:owner/login";
+        return "redirect:/login";
     }
 
     @GetMapping("/register-user")

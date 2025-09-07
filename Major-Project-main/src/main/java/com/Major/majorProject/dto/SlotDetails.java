@@ -8,5 +8,6 @@ import lombok.Setter;
 public class SlotDetails {
     private String startTime;
     private String endTime;
-    private String status;   //open or closed
+    private String status;//open or closed
+    private long cafeId;
 }

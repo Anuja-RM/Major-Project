@@ -70,8 +70,10 @@ public class OwnerController {
     @GetMapping("/slots/{pcId}")
     public String getAllSlotsOfPc(@PathVariable("pcId") long pcId, Model model){
         List<SlotDetails> slots =  ownerService.getAllSlotsOfPc(pcId);
+        PCDto pc = ownerService.findPCById(pcId); // Fetch the PC details
         model.addAttribute("slots", slots);
         model.addAttribute("pcId", pcId);
+        model.addAttribute("cafeId", pc.getCafeId()); // Pass cafeId to the model
         return "owner/slotList";
     }
 }

@@ -194,21 +194,21 @@ public class OwnerService {
         userBookingRepository.save(booking);
     }
 
+    public PCDto findPCById(long pcId) {
+        PC pc = pcRepository.findById(pcId)
+                .orElseThrow(() -> new RuntimeException("PC not found with ID: " + pcId));
+        return mapPcToPcDto(pc);
+    }
+
     private PCDto mapPcToPcDto(PC pc) {
         PCDto pcDto = new PCDto();
         pcDto.setId(pc.getId());
         pcDto.setSeatNumber(pc.getSeatNumber());
         pcDto.setConfiguration(pc.getConfiguration());
         pcDto.setAvailable(getPcAvailability(pc.getId()));
-        pcDto.setCafeId(pc.getCafe().getId());
+        pcDto.setCafeId(pc.getCafe().getId()); // Ensure you're setting the cafeId here
         pcDto.setCafeName(pc.getCafe().getName());
         return pcDto;
-    }
-
-    public PCDto findPCById(long pcId) {
-        PC pc = pcRepository.findById(pcId)
-                .orElseThrow(() -> new RuntimeException("PC not found with ID: " + pcId));
-        return mapPcToPcDto(pc);
     }
 
     public List<SlotDetails> getAllSlotsOfPc(long pcId) {
@@ -227,21 +227,19 @@ public class OwnerService {
             slot.setStartTime(currentTime.toString());
             LocalTime endTime = currentTime.plusHours(1);
             slot.setEndTime(endTime.toString());
+            slot.setStatus("open");
+            slot.setCafeId(cafe.getId()); // Set the cafeId for each slot
 
-            boolean isBooked = false;
             for (UserBooking booking : bookings) {
-                if (!currentTime.isBefore(booking.getStartTime()) && currentTime.isBefore(booking.getEndTime())) {
-                    isBooked = true;
+                if (currentTime.isBefore(booking.getEndTime()) && endTime.isAfter(booking.getStartTime())) {
+                    slot.setStatus("closed");
                     break;
                 }
             }
-
-            slot.setStatus(isBooked ? "closed" : "open");
             slots.add(slot);
             currentTime = endTime;
         }
         return slots;
     }
-
 
 }
