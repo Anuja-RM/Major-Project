@@ -18,8 +18,6 @@ public class PC {
 
     private String available;
 
-
-
     @ManyToOne
     @JoinColumn(name = "cafe_id", nullable = false)
     private Cafe cafe;

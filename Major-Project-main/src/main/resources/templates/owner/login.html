@@ -14,14 +14,7 @@
             }
         }
     </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Rajdhani', sans-serif; }
-        .font-orbitron { font-family: 'Orbitron', monospace; }
-        .text-glow { text-shadow: 0 0 10px currentColor; }
-        .btn-gaming { background: linear-gradient(45deg, #8b5cf6, #00ffff); transition: all 0.3s ease; }
-        .btn-gaming:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); }
-    </style>
+    <link rel="stylesheet" th:href="@{'/css/style.css'}">
 </head>
 <body class="bg-dark-bg text-white">
 <div class="min-h-screen flex items-center justify-center p-4" style="background-image: linear-gradient(rgba(10,10,10,0.8), #0a0a0a), url('https://placehold.co/1920x1080/0a0a0a/00ffff?text=Admin+BG'); background-size: cover;">
@@ -53,5 +46,7 @@
         </form>
     </div>
 </div>
+
+<script th:src="@{'/js/script.js'}" defer></script>
 </body>
 </html>

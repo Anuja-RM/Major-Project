@@ -14,13 +14,7 @@
             }
         }
     </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Rajdhani', sans-serif; }
-        .font-orbitron { font-family: 'Orbitron', monospace; }
-        .sidebar-link.active { background-color: #00ffff20; border-left: 3px solid #00ffff; color: #00ffff; }
-        .btn-gaming { background: linear-gradient(45deg, #10b981, #00ffff); }
-    </style>
+    <link rel="stylesheet" th:href="@{'/css/style.css'}">
 </head>
 <body class="bg-dark-bg text-white flex">
 <aside class="w-64 bg-dark-secondary h-screen sticky top-0 border-r border-neon-cyan/20 flex flex-col">
@@ -63,5 +57,7 @@
         </table>
     </div>
 </main>
+
+<script th:src="@{'/js/script.js'}" defer></script>
 </body>
 </html>

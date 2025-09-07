@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+.font-orbitron { font-family: 'Orbitron', monospace; }
+.font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+
+.text-glow {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+}
+
+.text-glow-1 {
+    text-shadow: 0 0 6px currentColor, 0 0 12px currentColor, 0 0 18px currentColor;
+
+}
+
+.text-glow-2 {
+    text-shadow: 0 0 12px currentColor;
+
+}
+
+.bg-gradient-gaming {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 255, 255, 0.3);
+}
+
+.btn-gaming {
+    background: linear-gradient(45deg, #8b5cf6, #00ffff);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-gaming:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+.btn-gaming::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-gaming:hover::before {
+    left: 100%;
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, #10b981, #8b5cf6);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-secondary:hover::before {
+    left: 100%;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #8b5cf6, #00ffff, #10b981);
+    background-size: 200% 100%;
+    animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.hero-bg {
+    background-image: linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.7)), url('https://placehold.co/1920x1080/0a0a0a/1a1a1a?text=Hero+BG');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.particle {
+    position: absolute;
+    background: #00ffff;
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: particle-float 6s infinite linear;
+}
+
+@keyframes particle-float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+.feature-icon {
+    background: linear-gradient(135deg, #8b5cf6, #00ffff);
+    border-radius: 12px;
+    padding: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+}
+
+.sidebar-link.active {
+    background-color: #00ffff20;
+    border-left: 3px solid #00ffff;
+    color: #00ffff;
+}
+
+.pc-card {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(42, 42, 42, 0.9));
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.filter-input {
+    background: rgba(26, 26, 26, 0.8);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.cafe-card {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(42, 42, 42, 0.9));
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}

@@ -17,4 +17,5 @@ public class CafeAdditionDto {
     @DateTimeFormat(pattern = "HH:mm") // Added annotation
     private LocalTime closeTime;
     private double hourlyRate;
+    private int availablePcs;
 }

@@ -3,59 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${cafe.name} + ' - Smart PS Lounge'">Cafe Details</title>
+    <title th:text="${cafe.name} + ' - Details'">Cafe Details</title>
+
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 'neon-cyan': '#00ffff', 'neon-purple': '#8b5cf6', 'neon-green': '#10b981', 'dark-bg': '#0a0a0a', 'dark-secondary': '#1a1a1a' },
+                    colors: {
+                        'neon-cyan': '#00ffff',
+                        'neon-purple': '#8b5cf6',
+                        'neon-green': '#10b981',
+                        'dark-bg': '#0a0a0a',
+                        'dark-secondary': '#1a1a1a',
+                        'dark-tertiary': '#2a2a2a'
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff' },
+                            '100%': { boxShadow: '0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
                 }
             }
         }
     </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Rajdhani', sans-serif; }
-        .font-orbitron { font-family: 'Orbitron', monospace; }
-        .text-glow { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
-        .btn-gaming { background: linear-gradient(45deg, #8b5cf6, #00ffff); }
-        .pc-card { background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(42, 42, 42, 0.9)); border: 1px solid rgba(0, 255, 255, 0.2); }
-    </style>
+
+    <!-- Shared Styles and Scripts -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}">
 </head>
-<body class="bg-dark-bg text-white font-rajdhani">
+<body class="bg-dark-bg text-white font-rajdhani overflow-x-hidden">
+
+<!-- Floating Particles -->
+<div class="fixed inset-0 pointer-events-none z-0">
+    <div class="particle w-1 h-1" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle w-2 h-2" style="left: 20%; animation-delay: 1s;"></div>
+    <div class="particle w-1 h-1" style="left: 30%; animation-delay: 2s;"></div>
+    <div class="particle w-2 h-2" style="left: 40%; animation-delay: 3s;"></div>
+    <div class="particle w-1 h-1" style="left: 50%; animation-delay: 4s;"></div>
+    <div class="particle w-2 h-2" style="left: 60%; animation-delay: 5s;"></div>
+    <div class="particle w-1 h-1" style="left: 70%; animation-delay: 0.5s;"></div>
+    <div class="particle w-2 h-2" style="left: 80%; animation-delay: 1.5s;"></div>
+    <div class="particle w-1 h-1" style="left: 90%; animation-delay: 2.5s;"></div>
+</div>
+
+<!-- Navigation -->
 <nav class="fixed top-0 w-full bg-dark-secondary/90 backdrop-blur-md border-b border-neon-cyan/20 z-50">
-    <div class="container mx-auto px-6 py-4 flex justify-between">
-        <a th:href="@{/}" class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-gradient-to-r from-neon-purple to-neon-cyan rounded-lg flex items-center justify-center"><span class="font-orbitron font-bold text-lg text-dark-bg">PS</span></div>
-            <span class="font-orbitron font-bold text-xl text-neon-cyan">Smart PS lounge</span>
-        </a>
-        <a th:href="@{/user/cafes}" class="text-gray-300 hover:text-neon-cyan">&laquo; Back to List</a>
-    </div>
-</nav>
-<section class="pt-32 pb-10 bg-dark-bg text-center">
-    <h1 class="font-orbitron text-5xl font-bold text-glow text-neon-cyan" th:text="${cafe.name}">Cafe Name</h1>
-    <p class="text-gray-400 mt-2" th:text="${cafe.address}">Cafe Address</p>
-</section>
-<section class="py-20 bg-dark-secondary">
-    <div class="container mx-auto px-6">
-        <h2 class="font-orbitron font-bold text-4xl text-center text-glow text-neon-purple mb-12">Available PCs</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div th:each="pc : ${cafe.pcs}" class="pc-card rounded-xl p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-orbitron text-xl font-bold text-neon-cyan" th:text="'Seat ' + ${pc.seatNumber}">Seat #</h3>
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold" th:text="${pc.available == 'true' ? 'Available' : 'Booked'}"
-                          th:classappend="${pc.available == 'true'} ? 'bg-neon-green/20 text-neon-green' : 'bg-red-500/20 text-red-400'"></span>
+    <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <a th:href="@{'/landing'}" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gradient-to-r from-neon-purple to-neon-cyan rounded-lg flex items-center justify-center animate-glow">
+                    <span class="font-orbitron font-bold text-lg">PS</span>
                 </div>
-                <p class="text-gray-400 mb-6" th:text="${pc.configuration}">PC Specs</p>
-                <form th:action="@{/user/book}" method="post" th:if="${pc.available == 'true'}">
-                    <input type="hidden" name="pcId" th:value="${pc.id}" />
-                    <button type="submit" class="w-full btn-gaming py-2 rounded-lg font-semibold">Book Now</button>
-                </form>
-                <button th:if="${pc.available != 'true'}" class="w-full bg-gray-600 py-2 rounded-lg font-semibold cursor-not-allowed" disabled>Booked</button>
+                <span class="font-orbitron font-bold text-xl text-glow-1 text-neon-cyan">Smart PS Lounge</span>
+            </a>
+
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/landing#home" class="hover:text-neon-cyan transition-colors duration-300">Home</a>
+                <a href="/landing#gamers" class="hover:text-neon-cyan transition-colors duration-300">For Gamers</a>
+                <a href="/landing#owners" class="hover:text-neon-cyan transition-colors duration-300">For Owners</a>
+                <a href="/landing#analytics" class="hover:text-neon-cyan transition-colors duration-300">Analytics</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <a th:href="@{'/user/findcafe'}" class="btn-gaming px-6 py-2 text-white font-semibold rounded-lg">
+                    All Cafes
+                </a>
             </div>
         </div>
     </div>
-</section>
+</nav>
+
+<!-- Cafe Header -->
+<header class="pt-32 pb-16 bg-dark-secondary text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/0a0a0a/1a1a1a?text=Cafe+Interior'); opacity: 0.2;"></div>
+    <div class="relative">
+        <h1 class="font-orbitron text-5xl font-bold text-glow text-neon-purple" th:text="${cafe.name}">Cafe Name</h1>
+        <p class="text-gray-400 mt-2 text-lg" th:text="${cafe.address}">Cafe Address</p>
+        <div class="mt-4 flex justify-center gap-6 text-neon-cyan">
+            <span>Open: <b th:text="${cafe.openTime}">10:00 AM</b></span>
+            <span>Close: <b th:text="${cafe.closeTime}">10:00 PM</b></span>
+            <span>Rate: <b th:text="'₹' + ${cafe.hourlyRate} + '/hr'"></b></span>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="container mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
+    <!-- Left Column: PCs and Reviews -->
+    <div class="lg:col-span-2">
+        <!-- PC Availability Section -->
+        <section id="pc-availability">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-orbitron font-bold text-3xl text-glow text-neon-purple">Gaming Stations</h2>
+                <div class="flex items-center gap-4">
+                    <span class="font-semibold">Sort by:</span>
+
+                    <button id="sort-by-seat" class="btn-gaming px-4 py-2 rounded-lg text-sm">Seat Number</button>
+                    <button id="sort-by-availability" class="btn-secondary px-4 py-2 rounded-lg text-sm">Availability</button>
+                </div>
+            </div>
+            <div id="pcGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- PC Card -->
+                <div th:each="pc : ${pcs}"
+                     class="pc-card rounded-xl p-4 glass-effect border-2 flex flex-col justify-between transition-all duration-300"
+                     th:classappend="${pc.available == 'Available' ? 'border-neon-green/30 hover:border-neon-green' : (pc.available == 'Busy' ? 'border-yellow-400/30 hover:border-yellow-400' : 'border-red-500/30 hover:border-red-500')}"
+                     th:attr="data-seat=${pc.seatNumber}, data-spec=${pc.configuration}">
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-orbitron text-lg font-bold text-neon-cyan" th:text="'Seat ' + ${pc.seatNumber}">Seat #</h3>
+                            <span class="pc-status px-3 py-1 rounded-full text-xs font-semibold"
+                                  th:text="${pc.available}"
+                                  th:classappend="${pc.available == 'Available' ? 'bg-neon-green/20 text-neon-green' : (pc.available == 'Busy' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400')}">
+                            </span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4" th:text="${pc.configuration}">PC Specs</p>
+                    </div>
+
+                    <div class="mt-auto">
+                        <form th:action="@{/user/book/{pcId}(pcId=${pc.id})}" method="post" th:if="${pc.available == 'Available'}">
+                            <input type="hidden" name="pcId" th:value="${pc.id}" />
+                            <button type="submit" class="w-full btn-gaming py-2 rounded-lg font-semibold text-sm">Book Now</button>
+                        </form>
+                        <button th:if="${pc.available != 'Available'}" class="w-full bg-gray-600 py-2 rounded-lg font-semibold cursor-not-allowed text-sm" disabled th:text="${pc.available}">
+                            Booked
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Right Column: About and Amenities -->
+    <aside class="lg:col-span-1 space-y-12">
+        <!-- About Section -->
+        <section>
+            <h3 class="font-orbitron font-bold text-2xl text-glow text-neon-purple mb-4">About Us</h3>
+            <p class="text-gray-400 leading-relaxed">
+                Welcome to <span th:text="${cafe.name}">the Cafe</span>, the ultimate destination for gamers in <span th:text="${cafe.address}">the area</span>. We offer top-of-the-line gaming PCs, a vibrant atmosphere, and a community of passionate gamers. Whether you're a casual player or a competitive pro, you'll find everything you need for an epic gaming session.
+            </p>
+        </section>
+
+        <!-- Amenities -->
+        <section>
+            <h3 class="font-orbitron font-bold text-2xl text-glow text-neon-purple mb-4">Amenities</h3>
+            <div class="grid grid-cols-2 gap-4 text-gray-300">
+                <div class="flex items-center space-x-3"><span class="text-neon-cyan">✓</span><span>High-Speed Internet</span></div>
+                <div class="flex items-center space-x-3"><span class="text-neon-cyan">✓</span><span>Comfortable Seating</span></div>
+                <div class="flex items-center space-x-3"><span class="text-neon-cyan">✓</span><span>Snacks & Drinks</span></div>
+                <div class="flex items-center space-x-3"><span class="text-neon-cyan">✓</span><span>Air Conditioning</span></div>
+                <div class="flex items-center space-x-3"><span class="text-neon-cyan">✓</span><span>Regular Tournaments</span></div>
+                <div class="flex items-center space-x-3"><span class="text-neon-cyan">✓</span><span>Friendly Staff</span></div>
+            </div>
+        </section>
+    </aside>
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark-secondary border-t border-neon-cyan/20 py-12">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Logo and Description -->
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-r from-neon-purple to-neon-cyan rounded-lg flex items-center justify-center animate-glow">
+                        <span class="font-orbitron font-bold text-lg">PS</span>
+                    </div>
+                    <span class="font-orbitron font-bold text-xl text-glow-1 text-neon-cyan">Smart PS Lounge</span>
+                </div>
+                <p class="text-gray-400 mb-6 max-w-md">
+                    The ultimate gaming destination where players come together to compete, connect, and conquer.
+                    Experience high-performance gaming with seamless booking and community events.
+                </p>
+
+                <!-- Contact Details -->
+                <div class="space-y-2 mb-6">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-neon-cyan">📍</span>
+                        <span class="text-gray-400">123 Gaming Street, Tech City, TC 12345</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-neon-cyan">📞</span>
+                        <span class="text-gray-400">+1 (555) 123-GAME</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-neon-cyan">✉️</span>
+                        <span class="text-gray-400">info@gamehub.com</span>
+                    </div>
+                </div>
+
+                <!-- Social Media Links -->
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 bg-dark-tertiary hover:bg-purple-600 hover:text-white transition-all duration-300 rounded-lg flex items-center justify-center">
+                        💬
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-dark-tertiary hover:bg-pink-600 hover:text-white transition-all duration-300 rounded-lg flex items-center justify-center">
+                        📷
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-dark-tertiary hover:bg-purple-500 hover:text-white transition-all duration-300 rounded-lg flex items-center justify-center">
+                        📺
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="font-orbitron font-bold text-lg mb-4 text-neon-cyan">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="/landing#gamers" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">For Gamers</a></li>
+                    <li><a href="/landing#owners" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">For Owners</a></li>
+                    <li><a href="/landing#analytics" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">Analytics</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">Support</a></li>
+                </ul>
+            </div>
+
+            <!-- Legal -->
+            <div>
+                <h3 class="font-orbitron font-bold text-lg mb-4 text-neon-cyan">Legal</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">Privacy Policy</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">Terms of Service</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">Cookie Policy</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-neon-cyan transition-colors duration-300">Refund Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="border-t border-neon-cyan/20 mt-8 pt-8 text-center">
+            <p class="text-gray-400">
+                © 2025 Smart PS Lounge. All rights reserved. Game. Compete. Conquer.
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script th:src="@{'/js/script.js'}" defer></script>
 </body>
 </html>

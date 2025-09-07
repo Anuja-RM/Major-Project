@@ -10,4 +10,7 @@ public class PCDto {
     private int seatNumber;
     private String configuration;
     private String available;
+    private long CafeId;
+    private String cafeName;
+
 }

@@ -14,13 +14,7 @@
             }
         }
     </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Rajdhani', sans-serif; }
-        .font-orbitron { font-family: 'Orbitron', monospace; }
-        .sidebar-link.active { background-color: #00ffff20; border-left: 3px solid #00ffff; color: #00ffff; }
-        .btn-gaming { background: linear-gradient(45deg, #10b981, #00ffff); }
-    </style>
+    <link rel="stylesheet" th:href="@{'/css/style.css'}">
 </head>
 <body class="bg-dark-bg text-white flex">
 <aside class="w-64 bg-dark-secondary h-screen sticky top-0 border-r border-neon-cyan/20 flex flex-col">
@@ -55,8 +49,10 @@
                 <td class="p-4" th:text="${pc.seatNumber}"></td>
                 <td class="p-4" th:text="${pc.configuration}"></td>
                 <td class="p-4">
-                        <span class="px-3 py-1 rounded-full text-sm font-semibold" th:text="${pc.available == 'true' ? 'Available' : 'Booked'}"
-                              th:classappend="${pc.available == 'true'} ? 'bg-neon-green/20 text-neon-green' : 'bg-red-500/20 text-red-400'"></span>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold"
+                              th:text="${pc.available}"
+                              th:classappend="${pc.available == 'Available' ? 'bg-neon-green/20 text-neon-green' : (pc.available == 'Busy' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400')}">
+                        </span>
                 </td>
                 <td class="p-4">
                     <a th:href="@{/owner/slots/{pcId}(pcId=${pc.id})}" class="text-neon-cyan hover:underline">View Slots</a>
@@ -66,5 +62,7 @@
         </table>
     </div>
 </main>
+
+<script th:src="@{'/js/script.js'}" defer></script>
 </body>
 </html>
