@@ -180,15 +180,13 @@ public class OwnerService {
     }
 
 
-    public void bookSlot(long pcId, LocalTime startTime, String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found for booking."));
+    public void bookSlot(long pcId, LocalTime startTime) {
         PC pc = pcRepository.findById(pcId)
                 .orElseThrow(() -> new RuntimeException("PC not found for booking."));
 
         UserBooking booking = new UserBooking();
         booking.setPc(pc);
-        booking.setUser(user);
+        //booking.setUser(user);
         booking.setBookingDate(LocalDate.now());
         booking.setStartTime(startTime);
         booking.setEndTime(startTime.plusHours(1));

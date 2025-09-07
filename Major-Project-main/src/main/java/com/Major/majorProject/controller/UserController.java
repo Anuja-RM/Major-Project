@@ -51,7 +51,7 @@ public class UserController {
 
     @PostMapping("/confirm-booking")
     public String confirmBooking(@RequestParam("pcId") long pcId, @RequestParam("startTime") String startTime) {
-        System.out.println("Confirmed booking for PC ID: " + pcId + " at slot starting: " + startTime);
+        ownerService.bookSlot(pcId, LocalTime.parse(startTime));
         return "redirect:/user/booking-confirmation";
     }
 
