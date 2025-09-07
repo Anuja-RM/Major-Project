@@ -227,14 +227,16 @@ public class OwnerService {
             slot.setStartTime(currentTime.toString());
             LocalTime endTime = currentTime.plusHours(1);
             slot.setEndTime(endTime.toString());
-            slot.setStatus("open");
 
+            boolean isBooked = false;
             for (UserBooking booking : bookings) {
-                if (currentTime.isBefore(booking.getEndTime()) && endTime.isAfter(booking.getStartTime())) {
-                    slot.setStatus("closed");
+                if (!currentTime.isBefore(booking.getStartTime()) && currentTime.isBefore(booking.getEndTime())) {
+                    isBooked = true;
                     break;
                 }
             }
+
+            slot.setStatus(isBooked ? "closed" : "open");
             slots.add(slot);
             currentTime = endTime;
         }

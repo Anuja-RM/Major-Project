@@ -14,10 +14,6 @@ public class UserBooking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String userName;
-    private String email;
-    private String phone;
     private LocalDate bookingDate;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -33,7 +29,7 @@ public class UserBooking {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 }
 
