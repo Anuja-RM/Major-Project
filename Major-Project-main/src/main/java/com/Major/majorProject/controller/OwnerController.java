@@ -3,6 +3,8 @@ package com.Major.majorProject.controller;
 import com.Major.majorProject.dto.CafeAdditionDto;
 import com.Major.majorProject.dto.PCDto;
 import com.Major.majorProject.dto.SlotDetails;
+import com.Major.majorProject.dto.SlotDto;
+import com.Major.majorProject.entity.PC;
 import com.Major.majorProject.service.OwnerService;
 import org.springframework.stereotype.Controller; // Changed from RestController
 import org.springframework.ui.Model; // Added Model
@@ -68,12 +70,31 @@ public class OwnerController {
     }
 
     @GetMapping("/slots/{pcId}")
-    public String getAllSlotsOfPc(@PathVariable("pcId") long pcId, Model model){
-        List<SlotDetails> slots =  ownerService.getAllSlotsOfPc(pcId);
-        PCDto pc = ownerService.findPCById(pcId); // Fetch the PC details
+    public String showSlotList(@PathVariable("pcId") long pcId, Model model) {
+        List<SlotDetails> slots = ownerService.getSlotsForPC(pcId);
+        PC pc = ownerService.getPCById(pcId);
+
         model.addAttribute("slots", slots);
         model.addAttribute("pcId", pcId);
-        model.addAttribute("cafeId", pc.getCafeId()); // Pass cafeId to the model
+        if (pc != null && pc.getCafe() != null) {
+            model.addAttribute("cafeId", pc.getCafe().getId());
+        } else {
+            model.addAttribute("cafeId", 0);
+        }
         return "owner/slotList";
+    }
+
+    @GetMapping("/addSlots/{pcId}")
+    public String showAddSlotsForm(@PathVariable("pcId") long pcId, Model model){
+        model.addAttribute("slotDto", new SlotDto());
+        model.addAttribute("pcId", pcId);
+        return "owner/addSlots";
+    }
+
+    @PostMapping("/addSlots/{pcId}")
+    public String addSlots(@PathVariable("pcId") long pcId, @ModelAttribute("slotDto") SlotDto slotDto){
+        slotDto.setPcId(pcId);
+        ownerService.addSlots(slotDto);
+        return "redirect:/owner/slots/" + pcId;
     }
 }

@@ -1,15 +1,9 @@
 package com.Major.majorProject.service;
 
-import com.Major.majorProject.dto.CafeAdditionDto;
-import com.Major.majorProject.dto.OwnerRegistrationDto;
-import com.Major.majorProject.dto.PCDto;
-import com.Major.majorProject.dto.SlotDetails;
-import com.Major.majorProject.entity.Cafe;
-import com.Major.majorProject.entity.CafeOwner;
-import com.Major.majorProject.entity.PC;
-import com.Major.majorProject.entity.User;
-import com.Major.majorProject.entity.UserBooking;
+import com.Major.majorProject.dto.*;
+import com.Major.majorProject.entity.*;
 import com.Major.majorProject.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,14 +25,16 @@ public class OwnerService {
     private final PasswordEncoder passwordEncoder;
     private final UserBookingRepository userBookingRepository;
     private final UserRepository userRepository;
+    private final SlotRepository slotRepository;
 
-    public OwnerService(CafeOwnerRepository cor, PasswordEncoder pe, CafeRepository cr, PCRepository pcr, UserBookingRepository ubr, UserRepository ur) {
+    public OwnerService(CafeOwnerRepository cor, PasswordEncoder pe, CafeRepository cr, PCRepository pcr, UserBookingRepository ubr, UserRepository ur, SlotRepository slotRepository) {
         this.cafeOwnerRepository = cor;
         this.passwordEncoder = pe;
         this.cafeRepository = cr;
         this.pcRepository = pcr;
         this.userBookingRepository = ubr;
         this.userRepository = ur;
+        this.slotRepository = slotRepository;
     }
 
     public void ownerRegistration(OwnerRegistrationDto ord) {
@@ -88,17 +85,6 @@ public class OwnerService {
             dto.setAvailablePcs((int) availableCount);
             return dto;
         }).collect(Collectors.toList());
-    }
-
-    public void addPC(long cafeId, PCDto pcdto) {
-        Cafe cafe = cafeRepository.findById(cafeId)
-                .orElseThrow(() -> new RuntimeException("Cafe not found"));
-        PC pc = new PC();
-        pc.setSeatNumber(pcdto.getSeatNumber());
-        pc.setConfiguration(pcdto.getConfiguration());
-        pc.setAvailable("Available");
-        pc.setCafe(cafe);
-        pcRepository.save(pc);
     }
 
     public List<PCDto> getAllPcOfCafe(long cafeId) {
@@ -224,11 +210,11 @@ public class OwnerService {
 
         while (currentTime.isBefore(closeTime)) {
             SlotDetails slot = new SlotDetails();
-            slot.setStartTime(currentTime.toString());
+            slot.setStartTime(currentTime);
             LocalTime endTime = currentTime.plusHours(1);
-            slot.setEndTime(endTime.toString());
+            slot.setEndTime(endTime);
             slot.setStatus("open");
-            slot.setCafeId(cafe.getId()); // Set the cafeId for each slot
+            slot.setCafeId(cafe.getId());
 
             for (UserBooking booking : bookings) {
                 if (currentTime.isBefore(booking.getEndTime()) && endTime.isAfter(booking.getStartTime())) {
@@ -240,6 +226,91 @@ public class OwnerService {
             currentTime = endTime;
         }
         return slots;
+    }
+
+    public void addPC(long cafeId, PCDto pcdto) {
+        Cafe cafe = cafeRepository.findById(cafeId)
+                .orElseThrow(() -> new RuntimeException("Cafe not found"));
+        PC pc = new PC();
+        pc.setSeatNumber(pcdto.getSeatNumber());
+        pc.setConfiguration(pcdto.getConfiguration());
+        pc.setAvailable("Available");
+        pc.setCafe(cafe);
+        PC savedPC = pcRepository.save(pc);
+        generateSlotsForPC(savedPC, cafe.getOpenTime(), cafe.getCloseTime());
+    }
+
+    private void generateSlotsForPC(PC pc, LocalTime openTime, LocalTime closeTime) {
+        LocalTime currentTime = openTime;
+        while (currentTime.isBefore(closeTime)) {
+            Slot slot = new Slot();
+            slot.setPc(pc);
+            slot.setStartTime(currentTime);
+            slot.setEndTime(currentTime.plusHours(1));
+            slot.setBooked(false);
+            slotRepository.save(slot);
+            currentTime = currentTime.plusHours(1);
+        }
+    }
+
+    public PC getPCById(long pcId) {
+        return pcRepository.findById(pcId).orElse(null);
+    }
+
+    public List<SlotDetails> getSlotsForPC(long pcId) {
+        List<Slot> savedSlots = slotRepository.findByPcId(pcId);
+
+        if (savedSlots.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        PC pc = getPCById(pcId);
+        long cafeId = (pc != null && pc.getCafe() != null) ? pc.getCafe().getId() : 0;
+
+        return savedSlots.stream()
+                .map(slot -> {
+                    SlotDetails details = new SlotDetails();
+                    details.setId(slot.getId());
+                    details.setStartTime(slot.getStartTime());
+                    details.setEndTime(slot.getEndTime());
+                    details.setCafeId(cafeId);
+
+                    // CORRECTED STATUS LOGIC:
+                    // The status now only depends on whether the slot is booked
+                    // or if its end time is before the current time today.
+                    if (slot.isBooked()) {
+                        details.setStatus("booked");
+                    } else if (slot.getEndTime().isBefore(LocalTime.now())) {
+                        details.setStatus("past");
+                    } else {
+                        details.setStatus("open");
+                    }
+                    return details;
+                })
+                .sorted(Comparator.comparing(SlotDetails::getStartTime))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void addSlots(SlotDto slotDto) {
+        PC pc = pcRepository.findById(slotDto.getPcId())
+                .orElseThrow(() -> new RuntimeException("PC not found with id: " + slotDto.getPcId()));
+
+        if (pc.getSlots() == null) {
+            pc.setSlots(new ArrayList<>());
+        }
+
+        for (LocalTime startTime : slotDto.getStartTime()) {
+            Slot slot = new Slot();
+            slot.setPc(pc); // Set the PC on the slot
+            slot.setStartTime(startTime);
+            slot.setEndTime(startTime.plusHours(1)); // Assuming 1-hour slots
+            slot.setBooked(false);
+
+            pc.getSlots().add(slot); // Add the new slot to the PC's list
+
+            slotRepository.save(slot);
+        }
     }
 
 }

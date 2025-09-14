@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Slots</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-cyan': '#00ffff',
+                        'neon-purple': '#8b5cf6',
+                        'dark-bg': '#0a0a0a',
+                        'dark-secondary': '#1a1a1a'
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" th:href="@{'/css/style.css'}">
+</head>
+<body class="bg-dark-bg text-white flex">
+<aside class="w-64 bg-dark-secondary h-screen sticky top-0 border-r border-neon-cyan/20 flex flex-col">
+    <div class="p-6 border-b border-neon-cyan/20">
+        <h1 class="font-orbitron font-bold text-xl text-neon-cyan text-center">OWNER PANEL</h1>
+    </div>
+    <nav class="p-4 space-y-2 flex-grow">
+        <a th:href="@{/owner/}" class="block py-3 px-4 rounded-lg hover:bg-neon-cyan/10 sidebar-link font-semibold">📈 Dashboard</a>
+        <a th:href="@{/owner/cafes}" class="block py-3 px-4 rounded-lg sidebar-link active font-semibold">☕ Manage Cafes</a>
+    </nav>
+    <div class="p-4 border-t border-neon-cyan/20">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="w-full text-center py-3 px-4 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-300 font-semibold">Logout</button>
+        </form>
+    </div>
+</aside>
+<main class="flex-1 p-8">
+    <h1 class="font-orbitron text-4xl font-bold text-neon-purple mb-8">Add Slots for PC</h1>
+    <form th:action="@{/owner/addSlots/{pcId}(pcId=${pcId})}" th:object="${slotDto}" method="post" class="max-w-xl mx-auto bg-dark-secondary p-8 rounded-xl border border-neon-purple/20 space-y-6">
+        <div id="slots-container" class="space-y-4">
+            <label class="block text-gray-300">Slot Start Times</label>
+            <div class="flex items-center gap-4 slot-row">
+                <input type="time" name="startTime" class="w-full mt-2 px-4 py-2 bg-dark-bg border border-neon-cyan/30 rounded-lg focus:outline-none focus:border-neon-cyan" required>
+                <button type="button" class="btn-gaming-sm bg-red-500/50 text-white font-bold py-2 px-4 rounded" onclick="removeSlot(this)">Remove</button>
+            </div>
+        </div>
+        <div class="flex gap-4 pt-4">
+            <button type="button" class="w-full btn-gaming bg-blue-500/50 py-3 rounded-lg font-semibold text-white text-lg" onclick="addSlot()">Add Another Slot</button>
+            <button type="submit" class="w-full btn-gaming py-3 rounded-lg font-semibold text-dark-bg text-lg">Save Slots</button>
+        </div>
+    </form>
+</main>
+
+<script>
+    function addSlot() {
+        const container = document.getElementById('slots-container');
+        const newSlot = document.createElement('div');
+        newSlot.className = 'flex items-center gap-4 slot-row';
+        newSlot.innerHTML = `
+            <input type="time" name="startTime" class="w-full mt-2 px-4 py-2 bg-dark-bg border border-neon-cyan/30 rounded-lg focus:outline-none focus:border-neon-cyan" required>
+            <button type="button" class="btn-gaming-sm bg-red-500/50 text-white font-bold py-2 px-4 rounded" onclick="removeSlot(this)">Remove</button>
+        `;
+        container.appendChild(newSlot);
+    }
+
+    function removeSlot(button) {
+        // Prevent removing the last slot
+        const container = document.getElementById('slots-container');
+        if (container.children.length > 2) { // 1 for label, >1 for inputs
+            button.parentElement.remove();
+        }
+    }
+</script>
+<script th:src="@{'/js/script.js'}" defer></script>
+</body>
+</html>

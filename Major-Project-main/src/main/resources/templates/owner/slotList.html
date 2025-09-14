@@ -54,6 +54,9 @@
                     </span>
                 </td>
             </tr>
+            <tr th:if="${slots.isEmpty()}">
+                <td colspan="3" class="p-4 text-center text-gray-500">No slots have been added for this PC yet. <a th:href="@{/owner/addSlots/{pcId}(pcId=${pcId})}" class="text-neon-cyan hover:underline">Add some now</a>.</td>
+            </tr>
             </tbody>
         </table>
     </div>
