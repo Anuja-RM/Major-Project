@@ -139,46 +139,32 @@ public class OwnerService {
     }
 
     public List<LocalTime> getAvailableSlotsForPC(long pcId) {
-        PC pc = pcRepository.findById(pcId).orElseThrow(() -> new RuntimeException("PC not found with id: " + pcId));
-        Cafe cafe = pc.getCafe();
-        LocalTime openTime = cafe.getOpenTime();
-        LocalTime closeTime = cafe.getCloseTime();
+        List<LocalTime> allSlots = slotRepository.findByPcId(pcId)
+                .stream()
+                .map(Slot::getStartTime)
+                .collect(Collectors.toList());
 
-        List<UserBooking> todaysBookings = userBookingRepository.findByPcIdAndBookingDate(pcId, LocalDate.now());
-        List<LocalTime> bookedStartTimes = todaysBookings.stream().map(UserBooking::getStartTime).toList();
+        List<UserBooking> bookings = userBookingRepository.findByPcIdAndBookingDate(pcId, LocalDate.now());
+        List<LocalTime> bookedSlots = bookings.stream()
+                .map(UserBooking::getStartTime)
+                .collect(Collectors.toList());
 
-        List<LocalTime> availableSlots = new ArrayList<>();
-        LocalTime potentialStartTime = openTime;
-        LocalTime now = LocalTime.now();
-
-        while (potentialStartTime.isBefore(closeTime)) {
-            LocalTime potentialEndTime = potentialStartTime.plusHours(1);
-
-            if (!bookedStartTimes.contains(potentialStartTime) &&
-                    !potentialStartTime.isBefore(now) &&
-                    !potentialEndTime.isAfter(closeTime)) {
-                availableSlots.add(potentialStartTime);
-            }
-
-            potentialStartTime = potentialStartTime.plusHours(1);
-        }
-        return availableSlots;
+        return allSlots.stream()
+                .filter(slot -> !bookedSlots.contains(slot))
+                .collect(Collectors.toList());
     }
 
-
     public void bookSlot(long pcId, LocalTime startTime) {
-        PC pc = pcRepository.findById(pcId)
-                .orElseThrow(() -> new RuntimeException("PC not found for booking."));
-
+        PC pc = pcRepository.findById(pcId).orElseThrow(() -> new RuntimeException("PC not found"));
         UserBooking booking = new UserBooking();
         booking.setPc(pc);
-        //booking.setUser(user);
         booking.setBookingDate(LocalDate.now());
         booking.setStartTime(startTime);
         booking.setEndTime(startTime.plusHours(1));
-
+        // booking.setUser(currentUser);
         userBookingRepository.save(booking);
     }
+
 
     public PCDto findPCById(long pcId) {
         PC pc = pcRepository.findById(pcId)
@@ -192,7 +178,7 @@ public class OwnerService {
         pcDto.setSeatNumber(pc.getSeatNumber());
         pcDto.setConfiguration(pc.getConfiguration());
         pcDto.setAvailable(getPcAvailability(pc.getId()));
-        pcDto.setCafeId(pc.getCafe().getId()); // Ensure you're setting the cafeId here
+        pcDto.setCafeId(pc.getCafe().getId());
         pcDto.setCafeName(pc.getCafe().getName());
         return pcDto;
     }
@@ -275,9 +261,6 @@ public class OwnerService {
                     details.setEndTime(slot.getEndTime());
                     details.setCafeId(cafeId);
 
-                    // CORRECTED STATUS LOGIC:
-                    // The status now only depends on whether the slot is booked
-                    // or if its end time is before the current time today.
                     if (slot.isBooked()) {
                         details.setStatus("booked");
                     } else if (slot.getEndTime().isBefore(LocalTime.now())) {

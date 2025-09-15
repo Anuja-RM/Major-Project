@@ -76,7 +76,7 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-            <form th:each="slot : ${availableSlots}" th:action="@{'/user/confirm-booking'}" method="post" class="w-full">
+            <form th:each="slot : ${availableSlots}" th:action="@{'/user/pre-confirm-booking'}" method="post" class="w-full">
                 <input type="hidden" name="pcId" th:value="${pc.id}" />
                 <input type="hidden" name="startTime" th:value="${#temporals.format(slot, 'HH:mm')}" />
                 <button type="submit" class="w-full btn-gaming py-3 rounded-lg font-semibold">

@@ -4,6 +4,8 @@ import com.Major.majorProject.dto.CafeAdditionDto;
 import com.Major.majorProject.dto.PCDto;
 import com.Major.majorProject.dto.SlotDetails;
 import com.Major.majorProject.service.OwnerService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +50,24 @@ public class UserController {
         return "user/userBookingSlots";
     }
 
+    @PostMapping("/pre-confirm-booking")
+    public String preConfirmBooking(@RequestParam("pcId") long pcId,
+                                    @RequestParam("startTime") String startTime,
+                                    @AuthenticationPrincipal UserDetails userDetails,
+                                    Model model) {
+        if (userDetails == null) {
+            model.addAttribute("pcId", pcId);
+            model.addAttribute("startTime", startTime);
+            return "user/userRegistrationPrompt";
+        }
+        return "redirect:/user/confirm-booking?pcId=" + pcId + "&startTime=" + startTime;
+    }
 
-    @PostMapping("/confirm-booking")
-    public String confirmBooking(@RequestParam("pcId") long pcId, @RequestParam("startTime") String startTime) {
+
+    @GetMapping("/confirm-booking")
+    public String confirmBooking(@RequestParam("pcId") long pcId,
+                                 @RequestParam("startTime") String startTime,
+                                 @AuthenticationPrincipal UserDetails userDetails) {
         ownerService.bookSlot(pcId, LocalTime.parse(startTime));
         return "redirect:/user/booking-confirmation";
     }

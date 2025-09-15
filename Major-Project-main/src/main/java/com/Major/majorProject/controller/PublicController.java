@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PublicController {
@@ -44,16 +45,25 @@ public class PublicController {
         return "redirect:/login";
     }
 
-    @GetMapping("/register-user")
-    public String showUserRegistrationForm(Model model) {
-        model.addAttribute("userRegistrationDto", new UserRegistrationDto());
+    @GetMapping("/register/user")
+    public String showUserRegistrationForm(@RequestParam(value = "pcId", required = false) Long pcId,
+                                           @RequestParam(value = "startTime", required = false) String startTime,
+                                           Model model) {
+        model.addAttribute("user", new UserRegistrationDto());
+        model.addAttribute("pcId", pcId);
+        model.addAttribute("startTime", startTime);
         return "user/userRegistration";
     }
 
-    // Handles user registration form submission
-    @PostMapping("/register-user")
-    public String userRegistration(@ModelAttribute("userRegistrationDto") UserRegistrationDto userDto) {
-        userService.userRegistration(userDto);
-        return "redirect:user/userFindCafe";
+    @PostMapping("/register/user")
+    public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto,
+                                      @RequestParam(value = "pcId", required = false) Long pcId,
+                                      @RequestParam(value = "startTime", required = false) String startTime) {
+        userService.userRegistration(registrationDto);
+
+        if (pcId != null && startTime != null) {
+            return "redirect:/login?pcId=" + pcId + "&startTime=" + startTime;
+        }
+        return "redirect:/login";
     }
 }
