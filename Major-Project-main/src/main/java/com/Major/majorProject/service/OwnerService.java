@@ -3,7 +3,9 @@ package com.Major.majorProject.service;
 import com.Major.majorProject.dto.*;
 import com.Major.majorProject.entity.*;
 import com.Major.majorProject.repository.*;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -138,7 +140,7 @@ public class OwnerService {
         }
     }
 
-    public List<LocalTime> getAvailableSlotsForPC(long pcId) {
+    public List<LocalTime> getAvailableSlotsForPC(long pcId,LocalDate date) {
         List<LocalTime> allSlots = slotRepository.findByPcId(pcId)
                 .stream()
                 .map(Slot::getStartTime)
@@ -154,15 +156,36 @@ public class OwnerService {
                 .collect(Collectors.toList());
     }
 
-    public void bookSlot(long pcId, LocalTime startTime) {
-        PC pc = pcRepository.findById(pcId).orElseThrow(() -> new RuntimeException("PC not found"));
-        UserBooking booking = new UserBooking();
-        booking.setPc(pc);
-        booking.setBookingDate(LocalDate.now());
-        booking.setStartTime(startTime);
-        booking.setEndTime(startTime.plusHours(1));
-        // booking.setUser(currentUser);
-        userBookingRepository.save(booking);
+    @Transactional
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    public boolean bookSlot(long pcId, LocalTime startTime) {
+        PC pc = pcRepository.findById(pcId)
+                .orElseThrow(() -> new RuntimeException("PC not found with ID: " + pcId));
+
+        // Find the specific slot for the given PC and start time
+        Slot slotToBook = pc.getSlots().stream()
+                .filter(slot -> slot.getStartTime().equals(startTime))
+                .findFirst()
+                .orElse(null);
+
+        // Check if the slot exists and is available
+        if (slotToBook != null && slotToBook.getStatus() == Slot.SlotStatus.AVAILABLE) {
+            slotToBook.setStatus(Slot.SlotStatus.BOOKED);
+            slotRepository.save(slotToBook);
+
+            // Create a corresponding booking record
+            UserBooking booking = new UserBooking();
+            booking.setPc(pc);
+            booking.setBookingDate(LocalDate.now());
+            booking.setStartTime(startTime);
+            booking.setEndTime(startTime.plusHours(1));
+            // In a real app, you would set the current user here
+            // booking.setUser(currentUser);
+            userBookingRepository.save(booking);
+            return true; // Booking successful
+        } else {
+            return false; // Slot was not available or already booked
+        }
     }
 
 
@@ -233,7 +256,7 @@ public class OwnerService {
             slot.setPc(pc);
             slot.setStartTime(currentTime);
             slot.setEndTime(currentTime.plusHours(1));
-            slot.setBooked(false);
+            slot.setStatus(Slot.SlotStatus.AVAILABLE);
             slotRepository.save(slot);
             currentTime = currentTime.plusHours(1);
         }
@@ -261,12 +284,21 @@ public class OwnerService {
                     details.setEndTime(slot.getEndTime());
                     details.setCafeId(cafeId);
 
-                    if (slot.isBooked()) {
-                        details.setStatus("booked");
-                    } else if (slot.getEndTime().isBefore(LocalTime.now())) {
-                        details.setStatus("past");
-                    } else {
-                        details.setStatus("open");
+                    switch (slot.getStatus()) {
+                        case BOOKED:
+                            details.setStatus("booked");
+                            break;
+                        case HOLD:
+                            details.setStatus("on-hold");
+                            break;
+                        case AVAILABLE:
+                        default:
+                            if (slot.getEndTime().isBefore(LocalTime.now())) {
+                                details.setStatus("past");
+                            } else {
+                                details.setStatus("open");
+                            }
+                            break;
                     }
                     return details;
                 })
@@ -288,7 +320,7 @@ public class OwnerService {
             slot.setPc(pc); // Set the PC on the slot
             slot.setStartTime(startTime);
             slot.setEndTime(startTime.plusHours(1)); // Assuming 1-hour slots
-            slot.setBooked(false);
+            slot.setStatus(Slot.SlotStatus.AVAILABLE);
 
             pc.getSlots().add(slot); // Add the new slot to the PC's list
 

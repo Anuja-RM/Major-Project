@@ -30,6 +30,13 @@ public class Slot {
     @Column(nullable = false)
     private LocalTime endTime;
 
-    @Column(nullable = false)
-    private boolean isBooked = false;
+    @Enumerated(EnumType.STRING)
+    private SlotStatus status = SlotStatus.AVAILABLE;
+
+    private LocalTime holdExpiresAt;
+
+    public enum SlotStatus {
+        AVAILABLE, HOLD, BOOKED
+    }
+
 }

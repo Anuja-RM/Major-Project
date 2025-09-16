@@ -4,12 +4,14 @@ import com.Major.majorProject.dto.CafeAdditionDto;
 import com.Major.majorProject.dto.PCDto;
 import com.Major.majorProject.dto.SlotDetails;
 import com.Major.majorProject.service.OwnerService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -41,12 +43,15 @@ public class UserController {
         return "user/userCafeDetails";
     }
 
-    @PostMapping("/book/{pcId}")
-    public String showBookingSlots(@PathVariable("pcId") long pcId, Model model) {
+    @GetMapping("/pcs/{pcId}/slots")
+    public String showBookingSlots(@PathVariable("pcId") long pcId,
+                                   @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                   Model model) {
         PCDto pcDto = ownerService.findPCById(pcId);
-        List<LocalTime> slots = ownerService.getAvailableSlotsForPC(pcId);
+        List<LocalTime> slots = ownerService.getAvailableSlotsForPC(pcId, date);
         model.addAttribute("pc", pcDto);
         model.addAttribute("availableSlots", slots);
+        model.addAttribute("bookingDate", date);
         return "user/userBookingSlots";
     }
 

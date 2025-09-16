@@ -134,7 +134,7 @@
                     </div>
 
                     <div class="mt-auto">
-                        <form th:action="@{/user/book/{pcId}(pcId=${pc.id})}" method="post" th:if="${pc.available == 'Available'}">
+                        <form th:action="@{/user/pcs/{pcId}/slots(pcId=${pc.id})}" method="get" th:if="${pc.available == 'Available'}">
                             <input type="hidden" name="pcId" th:value="${pc.id}" />
                             <button type="submit" class="w-full btn-gaming py-2 rounded-lg font-semibold text-sm">Book Now</button>
                         </form>
